@@ -1,0 +1,54 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "60c72b2f9b1d4c3d88f3e3a2"
+        name:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          example: "juan@example.com"
+  responses:
+    UnauthorizedError:
+      description: No autorizado, token JWT inválido o ausente.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error"
+              message:
+                type: string
+                example: "No autorizado"
+    NotFoundError:
+      description: Usuario no encontrado.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error"
+              message:
+                type: string
+                example: "Usuario no encontrado"
+    ServerError:
+      description: Error interno del servidor.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: "error"
+              message:
+                type: string
+                example: "Error al procesar la solicitud"

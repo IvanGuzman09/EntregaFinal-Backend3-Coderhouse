@@ -1,0 +1,418 @@
+paths:
+  /api/sessions/current:
+    get:
+      summary: Obtener información del usuario autenticado
+      description: Devuelve los datos del usuario autenticado basados en el token JWT proporcionado.
+      tags:
+        - Current
+      security:
+        - bearerAuth: []  # Autenticación JWT requerida
+      responses:
+        '200':
+          description: Información del usuario obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "Usuario autorizado"
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/sessions/logout:
+    delete:
+      summary: Cerrar sesión del usuario
+      description: Elimina la cookie de sesión del usuario para cerrar la sesión.
+      tags:
+        - Current
+      responses:
+        '302':
+          description: Sesión cerrada correctamente, redirecciona al inicio.
+          headers:
+            Location:
+              description: URL de redirección después de cerrar sesión.
+              schema:
+                type: string
+                example: "/"
+        '404':
+          description: No se encontró la cookie de sesión (token no presente).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No hay token para eliminar"
+        '500':
+          description: Error interno del servidor al intentar cerrar sesión.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Error del servidor al intentar cerrar sesión"
+
+  /api/pets/:
+    get:
+      summary: Obtener todas las mascotas
+      description: Retorna una lista con todas las mascotas disponibles.
+      tags:
+        - Pets
+      responses:
+        '200':
+          description: Lista de mascotas obtenida correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Pet'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      summary: Crear una nueva mascota
+      description: Crea una mascota con los datos proporcionados.
+      tags:
+        - Pets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - specie
+                - birthDate
+              properties:
+                name:
+                  type: string
+                  description: Nombre de la mascota.
+                  example: Firulais
+                specie:
+                  type: string
+                  description: Especie de la mascota.
+                  example: dog
+                birthDate:
+                  type: string
+                  format: date
+                  description: Fecha de nacimiento de la mascota.
+                  example: 2024-06-07
+      responses:
+        '200':
+          description: Mascota creada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    $ref: '#/components/schemas/Pet'
+        '400':
+          description: Datos incompletos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  error:
+                    type: string
+                    example: "Incomplete values"
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/pets/withimage:
+    post:
+      summary: Crear una mascota con imagen
+      description: Crea una mascota con los datos proporcionados y una imagen adjunta.
+      tags:
+        - Pets
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - specie
+                - birthDate
+                - image
+              properties:
+                name:
+                  type: string
+                  description: Nombre de la mascota.
+                  example: Firulais
+                specie:
+                  type: string
+                  description: Especie de la mascota.
+                  example: dog
+                birthDate:
+                  type: string
+                  format: date
+                  description: Fecha de nacimiento de la mascota.
+                  example: 2024-06-07
+                image:
+                  type: string
+                  format: binary
+                  description: Imagen de la mascota.
+      responses:
+        '200':
+          description: Mascota creada con imagen exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    $ref: '#/components/schemas/Pet'
+        '400':
+          description: Datos incompletos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "error"
+                  error:
+                    type: string
+                    example: "Incomplete values"
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/pets/{pid}:
+    put:
+      summary: Actualizar una mascota
+      description: Actualiza los datos de una mascota existente.
+      tags:
+        - Pets
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          description: ID de la mascota a actualizar.
+          schema:
+            type: string
+            example: "60c72b2f9b1d4c3d88f3e3a2"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Max
+                specie:
+                  type: string
+                  example: cat
+                birthDate:
+                  type: string
+                  format: date
+                  example: 2023-05-05
+      responses:
+        '200':
+          description: Mascota actualizada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "pet updated"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      summary: Eliminar una mascota
+      description: Elimina una mascota por su ID.
+      tags:
+        - Pets
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          description: ID de la mascota a eliminar.
+          schema:
+            type: string
+            example: "60c72b2f9b1d4c3d88f3e3a2"
+      responses:
+        '200':
+          description: Mascota eliminada correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "pet deleted"
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /api/adoptions:
+    get:
+      summary: Obtener todas las adopciones
+      description: Retorna una lista de todas las adopciones registradas.
+      tags:
+        - Adoptions
+      responses:
+        '200':
+          description: Lista de adopciones obtenida correctamente.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/adoptions/{aid}:
+    get:
+      summary: Obtener una adopción por ID
+      description: Retorna los detalles de una adopción específica.
+      tags:
+        - Adoptions
+      parameters:
+        - in: path
+          name: aid
+          required: true
+          description: ID de la adopción.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Adopción obtenida correctamente.
+        '404':
+          description: Adopción no encontrada.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /api/adoptions/{uid}/{pid}:
+    post:
+      summary: Crear una adopción
+      description: Registra una nueva adopción con el ID del usuario y de la mascota.
+      tags:
+        - Adoptions
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          description: ID del usuario.
+          schema:
+            type: string
+        - in: path
+          name: pid
+          required: true
+          description: ID de la mascota.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Adopción creada correctamente.
+        '400':
+          description: Datos incompletos.
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      description: Inicia sesión utilizando una estrategia local.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: securepassword
+      responses:
+        '200':
+          description: Inicio de sesión exitoso.
+        '401':
+          description: Credenciales incorrectas.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /auth/register:
+    post:
+      summary: Registrarse
+      description: Registra un nuevo usuario.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: securepassword
+      responses:
+        '201':
+          description: Registro exitoso.
+        '400':
+          description: Datos incompletos.
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /auth/login-google:
+    get:
+      summary: Iniciar sesión con Google
+      description: Inicia sesión utilizando Google OAuth.
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Inicio de sesión exitoso.
+        '401':
+          description: Autenticación fallida.
+        '500':
+          $ref: '#/components/responses/ServerError'

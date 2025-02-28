@@ -1,0 +1,164 @@
+components:
+  parameters:
+    schemas:
+      Adoption:
+        type: object
+        required:
+        properties:
+          owner: 
+            type: ObjectId
+            description: ObjectId del dueño de la mascota
+            example: 670a94f8dfcdde021d65f617
+          pet:
+            type: ObjectId
+            description: ObjectId de la mascota
+            exaple: 6751f9c9619538150b2e62ef
+      Carts:
+        type: object
+        required:
+          - products
+        properties:
+          products:
+            type: array
+            items:
+              type: object
+              properties:
+                product:
+                  type: string
+                  format: ObjectId
+                  description: ID del producto (referencia a la colección Product).
+                  example: "60c72b2f9b1d4c3d88f3e3a2"
+                quantity:
+                  type: integer
+                  description: Cantidad del producto.
+                  minimum: 1
+                  example: 2
+      Pet:
+        type: object
+        required:
+          - name
+          - specie
+        properties:
+          name:
+            type: string
+            description: Nombre de la mascota
+            example: Firulais
+          specie:
+            type: string
+            description: Especie de la mascota
+            example: dog
+          birthDate:
+            type: date
+            description: Fecha de nacimiento de la mascota
+            example: 2024-06-07T00:00:00.000Z
+          adopted:
+            type: boolean
+            description: Es verdadero si la mascota fue adoptada
+            example: true # La mascota fue adoptada
+          owner:
+            type: ObjectId
+            description: ObjectId que refiere a usuarios para referirse al dueño de la mascota
+            example: 670a94f8dfcdde021d65f617
+      Products:
+        type: object
+        required:
+          - title
+          - description
+          - code
+          - price
+          - status
+          - stock
+          - category
+          - thumbnails
+        properties:
+          title:
+            type: string
+            description: Titulo del producto
+            example: Pizza Margarita
+          description:
+            type: string
+            description: Descripcion del producto
+            example: Pizza italiana que contiene tomate, mozzarella , albahaca fresca, sal y aceite.
+          code:
+            type: string
+            description: Codigo del producto
+            example: CL1200
+          price:
+            type: number
+            description: Precio del producto
+            example: 450
+          status:
+            type: boolean
+            description: Estatus del producto
+            example: true
+          stock:
+            type: number
+            description: Cantidad de stock del producto
+            example: 12
+          category:
+            type: string
+            description: Categoria del producto
+            example: comida
+          thumbnails:
+            type: array
+            items: 
+              type: string
+              description: Imagenes del producto
+              example: juego_mesa.png
+      Ticket:
+        type: object
+        required:
+          - code
+          - purchase_datetime
+          - amount
+          - purchaser
+        properties:
+          code:
+            type: string
+            description: Codigo del ticket
+            example: TK12550
+          purchase_datetime:
+            type: date
+            description: Fecha de compra del ticket
+            example: 2024-06-07T14:30:00.000Z
+          amount:
+            type: number
+            description: Cantidad de tickets
+            example: 2
+          purchaser:
+            type: string
+            description: Comprador del ticket
+            example: Gregorio
+        User:
+        type: object
+        required:
+          - email
+        properties:
+          first_name:
+            type: string
+            description: Nombre del usuario
+            example: Kevin Alex
+          last_name:
+            type: string
+            description: Apellido del usuario
+            example: Muñoz Pascal
+          email:
+            type: string
+            description: Correo electronico del usuario
+            example: kevinalexmunozpascal@hotmail.com
+          age:
+            type: number
+            description: Edad del usuario
+            example: 20
+          password:
+            type: string
+            description: Contraseña hasheada del usuario
+            example: $2b$10$Kv/txjYJGVxeOhcd5Mw0zuiZAHgeQkFU8geqRks37OJTSH0ZwJDJy
+          cart:
+            type: ObjectId
+            description: ObjectId del carrito del usuario
+            example: 66de2d9f9e401d4c6530e8de
+          role:
+            type: string
+            description: Rol del usuario (user o admin)
+            example: user
